@@ -1,46 +1,56 @@
-# Quantum Pattern Recognition on Pauli-Masked Image States
+# Encrypted-Cloning Computation on Quantum Images: How It Works
 
-[![Tests](https://github.com/pritam-roy-99/quantum-encrypted-pattern-recognition/actions/workflows/tests.yml/badge.svg)](https://github.com/pritam-roy-99/quantum-encrypted-pattern-recognition/actions/workflows/tests.yml)
+![Slide-style workflow: encrypted-cloning quantum image processing](assets/encrypted-cloning-quantum-images.svg)
 
-A reproducible Qiskit research demonstration of image-pattern recognition on a physical IBM Quantum QPU. A grayscale 2×2 image is amplitude encoded into two qubits. Query and template are compared through a four-qubit destructive SWAP test. Both registers receive the same secret two-qubit Pauli mask, leaving overlap invariant. **This is not a fully private encrypted-cloning implementation.**
+This repository accompanies the supplied **encrypted-cloning quantum-image workflow**, the two uploaded research papers, and an exploratory Qiskit quantum-pattern-recognition implementation. The graphic is a **slide-style SVG recreation** of the original uploaded image.
 
-## Installation
+## Research papers supplied
 
-Requires Python 3.10+.
+| Paper | Publication | Links |
+|---|---|---|
+| **Computing on quantum shared secrets**, Yingkai Ouyang, Si-Hui Tan, Liming Zhao and Joseph F. Fitzsimons | Physical Review A **96**, 052333 (2017) | [Official article](https://doi.org/10.1103/PhysRevA.96.052333) |
+| **Quantum computing on encrypted data**, K. A. G. Fisher and collaborators | Nature Communications **5**, 3074 (2014) | [Official article](https://doi.org/10.1038/ncomms4074) |
+
+See [paper details and exact original filenames](docs/papers.md).
+
+## Encrypted-cloning quantum-image workflow
+
+1. Amplitude encode a grayscale image as a quantum state.
+2. Apply the conceptual encrypted-cloning encoder `W` to residual register `A`, clone registers `S1`, `S2`, and key register `N`.
+3. Explore which operations can be performed locally or cooperatively while preserving recoverability.
+4. Decode an output from `(S1,N)` or `(S2,N)`.
+
+The overview **does not** establish that every illustrated gate is available under every resource or encoder.
+
+## Included Qiskit pilot: Quantum image-pattern recognition
+
+A separate four-qubit implementation estimates `|<image|template>|²` using a destructive SWAP test on two 2×2 amplitude-encoded image states. A common Pauli mask on both inputs leaves this overlap invariant. This intentionally reveals similarity, so it is **not a fully private encrypted-cloning protocol** and does not prove any quantum speedup.
 
 ```bash
-python -m pip install -e '.[test,plot]'
-python -m pytest -q
-qepr --mode aer --shots 4096 --output results/local.json
-python examples/plot_results.py results/local.json
+pip install -e '.[test,plot]'
+pytest -q
+qepr --mode aer --shots 4096 --output results/aer.json
 ```
 
-## Actual IBM Quantum hardware
+For a real IBM Quantum processor with configured Qiskit Runtime credentials:
 
 ```bash
-python -m pip install -e '.[ibm,plot]'
-# Configure QiskitRuntimeService authentication using IBM Quantum documentation.
-qepr --mode ibm --backend YOUR_BACKEND_NAME --shots 4096 --output results/ibm.json
-python examples/plot_results.py results/ibm.json
+pip install -e '.[ibm]'
+qepr --mode ibm --backend YOUR_BACKEND --shots 4096 --output results/qpu.json
 ```
 
-Omit --backend to select an operational available non-simulator backend. No physical job or QPU result is claimed here. IBM QPU access requires user authentication and may incur charges.
+**Actual QPU results have not been collected.** The code implements a hardware execution path only.
 
-## Mathematics
+## Uploaded attachments
 
-For nonnegative pixel intensities I, let |I> = sum_j I_j |j> / ||I||. Pattern similarity is F(q,t) = |<q|t>|². The destructive SWAP measurement samples an observable with mean F. Correlated masking with P⊗P does not change the measured overlap.
+The source material consisted of three attachments:
 
-The example includes top-row, left-column and diagonal templates, an altered top-row query, Aer simulation, IBM SamplerV2, test cases, result JSON and plotting.
+- `Encrypted Quantum Image Cloning Workflow(1).png` (original supplied slide graphic)
+- `PhysRevA.96.052333.pdf` (publisher-formatted article)
+- `ncomms4074(1).pdf` (publisher-formatted article)
 
-**Security limitation:** sharing the same mask intentionally reveals similarity and may leak other relations. This does not implement the conceptual diagram's cloning encoder W, recovery D_i(S_i,N), or universal encrypted processing. The 2×2 example does not establish a quantum advantage. See [security analysis](docs/security_and_scope.md).
+These **exact binary originals** are available in the separately packaged downloadable project archive, but are not committed to this public repository. The public repository instead shows the recreated slide and provides official article links. This avoids implying public redistribution permission for publisher PDFs.
 
-## Background
+## Scope
 
-- Ouyang et al., *Computing on quantum shared secrets*, Phys. Rev. A **96**, 052333 (2017): https://doi.org/10.1103/PhysRevA.96.052333
-- Fisher et al., *Quantum computing on encrypted data*, Nat. Commun. **5**, 3074 (2014): https://doi.org/10.1038/ncomms4074
-
-These are distinct quantum cryptographic constructions; their security guarantees do not transfer to this example.
-
-## License
-
-MIT for code. Conceptual workflow artwork is available separately in the project ZIP and is not redistributed without a rights review.
+See [security and scientific limitations](docs/security_and_scope.md). The two cited papers develop different encrypted-computation primitives; neither guarantees the security of the experimental mask-and-overlap example in this repository.
